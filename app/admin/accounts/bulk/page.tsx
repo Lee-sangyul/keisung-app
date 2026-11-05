@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, FileUp, Download, UploadCloud, CheckCircle2, AlertTriangle, RotateCcw } from "lucide-react";
+import { ArrowLeft, FileUp, Download, UploadCloud, CheckCircle2, AlertTriangle } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
 import { AdminShell } from "@/components/AdminShell";
 import {

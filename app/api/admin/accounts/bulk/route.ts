@@ -13,7 +13,8 @@ type Failed = { index: number; username: string; error: string };
 export async function POST(request: Request) {
   try {
     const { ctx, error } = await adminContext(request);
-    if (error || !ctx) return error;
+    if (error) return error;
+    if (!ctx) return jsonError("관리 권한이 없습니다.", 403);
     const body = await request.json().catch(() => null);
     if (!body || !Array.isArray(body.rows) || body.rows.length === 0 || body.rows.length > MAX_STUDENT_IMPORT_BATCH) {
       return jsonError("한 번에 1~20명의 학생만 등록할 수 있습니다.", 400);
