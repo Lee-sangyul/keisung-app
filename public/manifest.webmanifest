@@ -1,0 +1,19 @@
+{
+  "name": "계성 스마트",
+  "short_name": "계성 스마트",
+  "description": "학교 생활 통합 앱 개발 버전",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fc",
+  "theme_color": "#173f85",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
