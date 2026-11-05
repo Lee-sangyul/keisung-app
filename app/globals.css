@@ -178,3 +178,10 @@ img,svg{max-width:100%}
 .staff-verify-result p{margin:0}
 .staff-verify-result small{line-height:1.6}
 @media(max-width:767px){.staff-id-page{padding:22px 15px calc(90px + env(safe-area-inset-bottom))}.staff-id-card{padding:21px;min-height:236px}.staff-id-person{margin-top:28px}.staff-id-person h2{font-size:27px}.staff-id-qr-panel{padding:18px}.staff-id-heading{margin:18px 0}}
+
+/* Accessible sign-out action on desktop and mobile profile */
+.profile-logout{margin-top:22px;padding-top:17px;border-top:1px solid #e6ebf4}
+.logout-button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;border-radius:12px;border:1px solid #e2b5bd;background:#fff7f8;color:#b52840;font-size:15px;font-weight:800;padding:12px 16px}
+.logout-button:hover{background:#fcebef}
+.logout-button:focus-visible{outline:3px solid #a04f8b;outline-offset:3px}
+.logout-button:disabled{opacity:.65;cursor:wait}
