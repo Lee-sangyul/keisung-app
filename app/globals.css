@@ -137,3 +137,44 @@ img,svg{max-width:100%}
 .verify-card{max-width:620px;margin:0 auto}.verify-card>p{color:#718098;font-size:14px;line-height:1.7}.verify-card .outline{display:flex;align-items:center;gap:8px;background:white}.verify-card .admin-form input{width:100%}.scan-video{width:100%;max-height:400px;object-fit:cover;background:#17233d;border-radius:14px}.scan-video-hidden{display:none}
 .verify-success{margin-top:25px;background:#eaf9f1;border:1px solid #b7dfca;color:#146940;padding:22px;border-radius:14px;display:flex;flex-direction:column;gap:7px}.verify-success h2{margin:0}.verify-success p{font-size:21px;font-weight:bold;margin:3px 0}.verify-success small,.verify-success em{font-size:12px;line-height:1.7}
 @media(max-width:767px){.id-page{padding-top:22px}.id-wrap{padding-bottom:calc(10px + env(safe-area-inset-bottom))}.digital-id{min-height:230px;padding:21px}.id-info{margin-top:25px}.id-info h2{font-size:27px}.id-qr-panel{padding:18px}.id-heading h1{font-size:24px}}
+
+/* v0.4.1 staff ID responsive card */
+.staff-id-page{min-height:100dvh;background:#f1f5fb;padding:32px 20px 92px}
+.staff-id-wrap{max-width:530px;margin:auto}
+.staff-id-heading{margin:26px 0 20px}
+.staff-id-heading .eyebrow{color:#2456a5}
+.staff-id-heading h1{font-size:clamp(24px,4vw,30px);margin:12px 0 8px}
+.staff-id-heading p{color:#728098;font-size:13px;line-height:1.65}
+.staff-id-card{position:relative;overflow:hidden;border-radius:22px;min-height:260px;background:linear-gradient(125deg,#142b4e,#1e4c89 68%,#3973ac);color:#fff;padding:25px;box-shadow:0 17px 30px #17396728}
+.staff-id-card::after{content:"K";font-size:270px;font-weight:900;position:absolute;right:-8px;bottom:-102px;opacity:.065;pointer-events:none}
+.staff-id-top{display:flex;align-items:center;gap:12px}
+.staff-id-logo{display:grid;place-items:center;flex-shrink:0;width:45px;height:45px;background:white;color:#183967;font-size:26px;font-weight:900;border-radius:12px}
+.staff-id-top strong{display:block;font-size:17px}
+.staff-id-top small{display:block;font-size:9px;letter-spacing:.4px;color:#cbdff9;margin-top:4px}
+.staff-id-badge{margin-left:auto;white-space:nowrap;border:1px solid #ffffff66;background:#ffffff1e;border-radius:30px;padding:7px 11px;font-size:11px}
+.staff-id-person{margin-top:38px}
+.staff-id-person span{font-size:11px;letter-spacing:2px;color:#cbdff9}
+.staff-id-person h2{font-size:30px;margin:6px 0 4px;overflow-wrap:anywhere}
+.staff-id-person p{font-size:16px;margin:0;color:#e1ebfb}
+.staff-id-footer{display:flex;align-items:center;gap:7px;font-size:11px;color:#d2e4ff;margin-top:26px}
+.staff-id-qr-panel{margin-top:20px;border:1px solid #e3e9f3;background:white;border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center}
+.staff-id-qr-panel h2{display:flex;align-items:center;gap:9px;font-size:18px;margin:0 0 18px;color:#15365c}
+.staff-id-qr{width:280px;height:280px;max-width:100%;object-fit:contain}
+.staff-id-qr-empty{min-height:225px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#8697ac;font-size:13px;text-align:center}
+.staff-id-countdown{font-size:13px;color:#225cb1}
+.staff-id-countdown strong{font-size:18px}
+.staff-id-qr-panel .primary{max-width:320px}
+.staff-id-verify-link{display:flex;justify-content:center;align-items:center;gap:8px;border-radius:12px;background:#e0ebfa;color:#22549f;padding:16px;margin-top:18px;font-weight:800;font-size:14px}
+.staff-id-note{display:flex;align-items:flex-start;gap:9px;color:#708097;font-size:12px;line-height:1.8;margin:20px 5px}
+.staff-id-note svg{flex-shrink:0}
+.staff-verify-page{min-height:100dvh}
+.staff-verify-widget{max-width:620px;margin:auto}
+.staff-verify-video{display:block;width:100%;max-height:420px;background:#122948;border-radius:14px;object-fit:cover;margin:14px 0}
+.staff-verify-video-hidden{display:none}
+.staff-camera-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;min-height:44px}
+.staff-verify-result{display:flex;flex-direction:column;gap:7px;background:#e8f8ef;border:1px solid #b5dbca;color:#146840;border-radius:15px;padding:25px;margin-top:20px}
+.staff-verify-result h2{font-size:18px;margin:0}
+.staff-verify-result strong{font-size:24px}
+.staff-verify-result p{margin:0}
+.staff-verify-result small{line-height:1.6}
+@media(max-width:767px){.staff-id-page{padding:22px 15px calc(90px + env(safe-area-inset-bottom))}.staff-id-card{padding:21px;min-height:236px}.staff-id-person{margin-top:28px}.staff-id-person h2{font-size:27px}.staff-id-qr-panel{padding:18px}.staff-id-heading{margin:18px 0}}

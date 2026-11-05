@@ -1,13 +1,13 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { House, Megaphone, UserRound, Shield, IdCard } from "lucide-react";
+import { House, Megaphone, UserRound, Shield, IdCard, BadgeCheck } from "lucide-react";
 import type { Role } from "@/lib/supabase";
 export function MobileNav({role}:{role?:Role}) {
  const path=usePathname();
  const items=[
   {href:"/dashboard",name:"홈",Icon:House},
   {href:"/announcements",name:"공지",Icon:Megaphone},
-  {href:"/student-id",name:"학생증",Icon:IdCard},
+  ...(role==="student" ? [{href:"/student-id",name:"학생증",Icon:IdCard}] : [{href:"/staff-id",name:"교직원증",Icon:BadgeCheck}]),
   {href:"/profile",name:"내 정보",Icon:UserRound},
   ...(role==="admin"||role==="superadmin"?[{href:"/admin",name:"관리",Icon:Shield}]:[])
  ];
