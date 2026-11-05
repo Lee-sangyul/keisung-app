@@ -21,10 +21,8 @@ export default function Dashboard(){
  async function logout(){await supabase.auth.signOut();router.replace("/");}
  async function changePassword(e:React.FormEvent){e.preventDefault();setPwError("");setPwBusy(true);
   if(newPw.length<12){setPwError("비밀번호는 12자 이상으로 설정해 주세요.");setPwBusy(false);return;}
-  const {error}=await supabase.auth.updateUser({password:newPw});
-  if(error){setPwError(error.message);setPwBusy(false);return;}
   const {data:{session}}=await supabase.auth.getSession();
-  const response=await fetch("/api/account/password-changed",{method:"POST",headers:{Authorization:`Bearer ${session?.access_token||""}`}});
+  const response=await fetch("/api/account/password-changed",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session?.access_token||""}`},body:JSON.stringify({password:newPw})});
   if(!response.ok){setPwError("비밀번호는 변경되었지만 확인 처리에 실패했어요. 관리자에게 문의해 주세요.");}else {setProfile(p=>p?{...p,must_change_password:false}:p);setNewPw("");}
   setPwBusy(false);
  }
