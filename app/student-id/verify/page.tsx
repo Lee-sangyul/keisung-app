@@ -29,7 +29,7 @@ export default function Verify(){
  }catch(e){stopCamera();setError(e instanceof Error?e.message:"카메라 사용 불가");}}
  if(!me)return <main className="center">교사 권한 확인 중...</main>;
  return <main className="admin-page verify-page"><MobileNav role={me.role}/><a className="back" href="/student-id"><ArrowLeft size={17}/> 학생증</a><div className="section-heading"><div><span className="eyebrow">QR VERIFICATION</span><h1>학생증 QR 검증</h1><p className="muted">교사·관리자 계정 전용 · 1회용 QR 확인</p></div></div>
- <section className="widget verify-card"><div className="widget-title"><ScanLine size={21}/><h2>QR 검증</h2></div><p>학생 휴대폰의 QR을 카메라로 읽거나, QR 문자열을 아래에 붙여넣으세요.</p>{camera&&<video className="scan-video" ref={videoRef} muted playsInline/>}{!camera&&<video className="scan-video-hidden" ref={videoRef} muted playsInline/>}
+ <section className="widget verify-card"><div className="widget-title"><ScanLine size={21}/><h2>QR 검증</h2></div><p>학생 휴대폰의 QR을 카메라로 읽거나, QR 문자열을 아래에 붙여넣으세요.</p><video className={camera?"scan-video":"scan-video-hidden"} ref={videoRef} muted playsInline/>
  <div className="action-row"><button className="outline" onClick={camera?stopCamera:startCamera}><Camera size={16}/>{camera?"카메라 종료":"카메라로 스캔"}</button></div>
  <form onSubmit={e=>{e.preventDefault();void verify(token.trim());}} className="admin-form"><label>QR 데이터</label><input value={token} onChange={e=>setToken(e.target.value)} placeholder="KSID1:..." required autoComplete="off"/><button className="primary" disabled={busy}>{busy?"검증 중...":"서버에서 검증"}</button></form>
  {error&&<p className="error" role="alert">{error}</p>}
