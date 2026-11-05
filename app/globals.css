@@ -122,3 +122,18 @@ img,svg{max-width:100%}
 @media (prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* Development-only student ID feature */
+.id-page{min-height:100dvh;padding:30px 18px 95px;background:#eef3fc}
+.id-wrap{max-width:520px;margin:auto}
+.id-heading{margin:25px 0 20px}.id-heading .eyebrow{color:#285bad}.id-heading h1{margin:10px 0;font-size:28px}.id-heading p{color:#74839b;font-size:13px}
+.digital-id{position:relative;border-radius:22px;overflow:hidden;min-height:260px;color:white;background:linear-gradient(130deg,#112e66,#245cb2 70%,#4d86dd);padding:25px;box-shadow:0 16px 32px #1a3e772b}
+.digital-id:after{content:"K";position:absolute;right:-20px;bottom:-90px;font-size:280px;font-weight:900;opacity:.07;pointer-events:none}
+.id-top{display:flex;align-items:center;gap:12px}.id-logo{background:white;color:#2253aa;border-radius:11px;width:44px;height:44px;display:grid;place-items:center;font-size:24px;font-weight:900}.id-top strong{font-size:17px}.id-top small{display:block;font-size:9px;opacity:.7;margin-top:3px}.id-dev{margin-left:auto;background:#ffffff24;border:1px solid #ffffff55;border-radius:20px;padding:7px;font-size:11px}
+.id-info{margin-top:38px}.id-info>span{font-size:11px;letter-spacing:2px;opacity:.75}.id-info h2{font-size:29px;margin:6px 0}.id-info p{font-size:16px;margin:0}.id-watermark{margin-top:27px;font-size:11px;opacity:.8;letter-spacing:.5px}
+.id-qr-panel{border-radius:19px;background:#fff;border:1px solid #e2eaf6;margin-top:18px;padding:24px;display:flex;flex-direction:column;align-items:center}.id-qr-title{display:flex;align-items:center;gap:9px;color:#2256ab;margin-bottom:14px}.id-qr-title h2{margin:0;color:#173252;font-size:17px}
+.id-qr{height:280px;width:280px;max-width:100%;object-fit:contain;background:white}.qr-timer{color:#1753a6;font-size:14px;font-weight:800}.qr-placeholder{height:230px;width:100%;display:flex;gap:12px;align-items:center;justify-content:center;flex-direction:column;color:#8998ae;text-align:center;font-size:13px}
+.id-qr-panel .primary{max-width:310px}.id-safety{font-size:12px;line-height:1.7;color:#6f7f96;display:flex;align-items:flex-start;gap:9px;padding:0 4px;margin-top:20px}.id-safety svg{flex-shrink:0}
+.verify-card{max-width:620px;margin:0 auto}.verify-card>p{color:#718098;font-size:14px;line-height:1.7}.verify-card .outline{display:flex;align-items:center;gap:8px;background:white}.verify-card .admin-form input{width:100%}.scan-video{width:100%;max-height:400px;object-fit:cover;background:#17233d;border-radius:14px}.scan-video-hidden{display:none}
+.verify-success{margin-top:25px;background:#eaf9f1;border:1px solid #b7dfca;color:#146940;padding:22px;border-radius:14px;display:flex;flex-direction:column;gap:7px}.verify-success h2{margin:0}.verify-success p{font-size:21px;font-weight:bold;margin:3px 0}.verify-success small,.verify-success em{font-size:12px;line-height:1.7}
+@media(max-width:767px){.id-page{padding-top:22px}.id-wrap{padding-bottom:calc(10px + env(safe-area-inset-bottom))}.digital-id{min-height:230px;padding:21px}.id-info{margin-top:25px}.id-info h2{font-size:27px}.id-qr-panel{padding:18px}.id-heading h1{font-size:24px}}
