@@ -11,6 +11,7 @@ export async function GET(request:Request) {
   const writer=["teacher","admin","superadmin"].includes(ctx.profile.role);
   if(manage&&!writer)return jsonError("권한이 없습니다.",403);
   let q=ctx.service.from("announcements").select("id,title,body,audience,pinned,published,author_id,created_at,updated_at").order("pinned",{ascending:false}).order("created_at",{ascending:false}).limit(100);
+  if(manage&&ctx.profile.role==="teacher")q=q.eq("author_id",ctx.user.id);
   if(!manage){q=q.eq("published",true);if(ctx.profile.role==="student")q=q.in("audience",["all","student"]);else if(ctx.profile.role==="teacher")q=q.in("audience",["all","teacher"]); }
   const {data,error}=await q;
   if(error)return jsonError("공지사항 DB 설정을 확인해 주세요.",500);
