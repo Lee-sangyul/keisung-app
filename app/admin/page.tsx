@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ArrowLeft,UserPlus,Shield,Users,KeyRound,UserX,UserCheck,History,RefreshCw} from "lucide-react";
 import {supabase,type Profile,type Role} from "@/lib/supabase";
+import {MobileNav} from "@/components/MobileNav";
 type Audit={id:number;actor_id:string;target_id:string;action:string;created_at:string};
 export default function Admin(){
  const router=useRouter();
@@ -47,7 +48,7 @@ export default function Admin(){
  }
  if(!me)return <main className="center">권한 확인 중...</main>;
  const canManage=(p:Profile)=>p.id!==me.id&&p.role!=="superadmin"&&(p.role!=="admin"||me.role==="superadmin");
- return <main className="admin-page">
+ return <main className="admin-page"><MobileNav role={me.role}/>
   <a className="back" href="/dashboard"><ArrowLeft size={17}/> 대시보드</a>
   <header className="admin-header"><Shield size={29}/><div><h1>계정 관리</h1><p>계정 발급·상태 변경·비밀번호 초기화 내역을 기록합니다.</p></div></header>
   <div className="admin-grid">

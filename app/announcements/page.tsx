@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ArrowLeft,Plus,Pin,Trash2,Pencil} from "lucide-react";
 import {supabase,type Profile} from "@/lib/supabase";
+import {MobileNav} from "@/components/MobileNav";
 type Notice={id:string;title:string;body:string;audience:"all"|"student"|"teacher";published:boolean;pinned:boolean;author_id:string;created_at:string};
 const labels={all:"전체",student:"학생",teacher:"교사"};
 export default function Announcements(){
@@ -25,7 +26,7 @@ export default function Announcements(){
  async function save(e:React.FormEvent){e.preventDefault();setStatus("");const t=await auth();const res=await fetch(editId?`/api/announcements/${editId}`:"/api/announcements",{method:editId?"PATCH":"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${t}`},body:JSON.stringify({title,body,audience,pinned,published})});const d=await res.json();if(!res.ok){setStatus(d.error||"저장 실패");return;}reset();await load(true);setStatus("공지사항을 저장했어요.");}
  async function remove(n:Notice){if(!window.confirm(`'${n.title}' 공지를 삭제할까요?`))return;const t=await auth();const res=await fetch(`/api/announcements/${n.id}`,{method:"DELETE",headers:{Authorization:`Bearer ${t}`}});if(res.ok){await load(true);setStatus("삭제 완료");}else setStatus("삭제 실패");}
  if(loading)return <main className="center">공지사항 불러오는 중...</main>;
- return <main className="admin-page"><a href="/dashboard" className="back"><ArrowLeft size={17}/> 대시보드</a>
+ return <main className="admin-page"><MobileNav role={me?.role}/><a href="/dashboard" className="back"><ArrowLeft size={17}/> 대시보드</a>
  <div className="section-heading"><div><p className="eyebrow">SCHOOL BOARD</p><h1>학교 공지사항</h1><p className="muted">학교생활의 중요한 소식을 확인하세요.</p></div>{canWrite&&<button className="outline" onClick={()=>{reset();setForm(true);}}><Plus size={16}/> 공지 작성</button>}</div>
  {status&&<p role="status" className="status-box">{status}</p>}
  {form&&canWrite&&<section className="widget notice-compose"><h2>{editId?"공지 수정":"새 공지 작성"}</h2><form onSubmit={save} className="admin-form"><label>제목</label><input value={title} onChange={e=>setTitle(e.target.value)} maxLength={150} required/><label>내용</label><textarea rows={7} value={body} onChange={e=>setBody(e.target.value)} maxLength={10000} required/><label>대상</label><select value={audience} onChange={e=>setAudience(e.target.value as typeof audience)}><option value="all">전체</option><option value="student">학생</option><option value="teacher">교사</option></select>{me?.role!=="teacher"&&<label className="check-line"><input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/> 상단 고정</label>}{editId&&<label className="check-line"><input type="checkbox" checked={published} onChange={e=>setPublished(e.target.checked)}/> 공개</label>}<div className="action-row"><button className="primary" type="submit">저장하기</button><button type="button" className="outline" onClick={reset}>취소</button></div></form></section>}

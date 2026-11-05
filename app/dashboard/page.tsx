@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { BookOpen, CalendarDays, CloudSun, GraduationCap, LogOut, ShieldCheck, Umbrella, Users, UserRound, KeyRound, Loader2, Megaphone } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
 import { NoticePreview } from "@/components/NoticePreview";
+import { MobileNav } from "@/components/MobileNav";
 type Meal={date:string;items:string[]};
 type Event={date:string;name:string};
 const roleName: Record<string,string>={student:"학생",teacher:"교사",admin:"관리자",superadmin:"시스템 관리자"};
@@ -32,7 +33,7 @@ export default function Dashboard(){
  if(profile.must_change_password)return <main className="center"><section className="change-card"><KeyRound size={30}/><h1>첫 로그인 비밀번호 변경</h1><p>임시 비밀번호를 새 비밀번호로 바꿔야 앱을 사용할 수 있어요.</p><form onSubmit={changePassword}><label>새 비밀번호 (12자 이상)</label><input type="password" autoComplete="new-password" value={newPw} onChange={e=>setNewPw(e.target.value)} required minLength={12}/>{pwError&&<div role="alert" className="error">{pwError}</div>}<button className="primary" disabled={pwBusy}>{pwBusy?"변경 중...":"비밀번호 변경"}</button></form><button className="text-btn" onClick={logout}>로그아웃</button></section></main>;
  const umbrella=process.env.NEXT_PUBLIC_UMBRELLA_URL;
  return <main className="dashboard"><aside className="sidebar"><div className="brand dark"><div className="brand-icon">K</div><span>계성 스마트<small>KEISUNG APP</small></span></div><nav><a className="active" href="/dashboard"><CloudSun size={19}/> 홈</a><a href="#meal"><BookOpen size={19}/> 급식</a><a href="#schedule"><CalendarDays size={19}/> 학사일정</a><a href="#umbrella"><Umbrella size={19}/> 우산 대여</a><a href="/announcements"><Megaphone size={19}/> 공지사항</a><a href="/profile"><UserRound size={19}/> 내 정보</a>{["admin","superadmin"].includes(profile.role)&&<a href="/admin"><Users size={19}/> 계정 관리</a>}</nav><div className="side-footer"><span>비공식 개발 버전</span><button onClick={logout}><LogOut size={17}/> 로그아웃</button></div></aside>
- <div className="main-content"><header className="topbar"><span>학교생활 대시보드</span><div className="user-chip"><UserRound size={18}/>{profile.display_name}<small>{roleName[profile.role]}</small></div></header>
+ <MobileNav role={profile.role}/><div className="main-content"><header className="topbar"><span>학교생활 대시보드</span><div className="user-chip"><UserRound size={18}/>{profile.display_name}<small>{roleName[profile.role]}</small></div></header>
  <div className="content"><div className="welcome"><span className="eyebrow">KEISUNG SMART</span><h1>안녕하세요, {profile.display_name}님! 👋</h1><p>오늘도 멋진 학교생활을 응원해요.</p></div>
  <div className="stat-grid"><div className="stat"><BookOpen/><strong>급식</strong><span>학교 식단 확인</span></div><div className="stat"><CalendarDays/><strong>학사 일정</strong><span>주요 일정 한눈에</span></div><div className="stat"><Umbrella/><strong>우산 대여</strong><span>외부 시스템 연결</span></div></div>
  {dataStatus&&<p className="notice">{dataStatus}</p>}
