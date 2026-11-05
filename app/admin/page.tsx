@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, UserCheck, UserX, Megaphone, UserRound, BadgeCheck, ArrowUpRight, Activity } from "lucide-react";
+import { Users, UserCheck, UserX, ScanLine, Megaphone, UserRound, BadgeCheck, ArrowUpRight, Activity } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
 import { AdminShell } from "@/components/AdminShell";
 

@@ -5,8 +5,17 @@ import {audit} from "@/lib/admin";
 export const runtime="nodejs";
 function allowed(role:string,requested:Role){return role==="superadmin"?["student","teacher","admin"].includes(requested):["student","teacher"].includes(requested);}
 export async function GET(request:Request){try{const ctx=await authenticate(request);if(!ctx)return jsonError("인증이 필요합니다.",401);if(!["admin","superadmin"].includes(ctx.profile.role)||ctx.profile.must_change_password)return jsonError("권한이 없습니다.",403);
-const {data,error}=await ctx.service.from("profiles").select("id,username,display_name,role,grade,class_number,student_number,must_change_password,disabled,created_at").order("created_at",{ascending:false}).limit(200);
-if(error)return jsonError("계정 목록 조회 실패",500);return Response.json({accounts:data},{headers:{"Cache-Control":"no-store"}});}catch{return jsonError("서버 오류",500);}}
+const url = new URL(request.url);
+const q=(url.searchParams.get("q")||"").trim().slice(0,60).replace(/[^\\p{L}\\p{N}\\s._-]/gu,"");
+const role=url.searchParams.get("role");
+const grade=url.searchParams.get("grade"),cl=url.searchParams.get("classNumber");
+let query=ctx.service.from("profiles").select("id,username,display_name,role,grade,class_number,student_number,must_change_password,disabled,created_at",{count:"exact"});
+if(q)query=query.or(`username.ilike.%${q}%,display_name.ilike.%${q}%`);
+if(role&&["student","teacher","admin","superadmin"].includes(role))query=query.eq("role",role);
+if(grade&&/^[1-6]$/.test(grade))query=query.eq("grade",Number(grade));
+if(cl&&/^([1-9]|[12][0-9]|30)$/.test(cl))query=query.eq("class_number",Number(cl));
+const {data,error,count}=await query.order("created_at",{ascending:false}).limit(200);
+if(error)return jsonError("계정 목록 조회 실패",500);return Response.json({accounts:data,total:count,limited:count!=null&&count>200},{headers:{"Cache-Control":"no-store"}});}catch{return jsonError("서버 오류",500);}}
 export async function POST(request:Request){try{const ctx=await authenticate(request);if(!ctx)return jsonError("인증이 필요합니다.",401);if(!["admin","superadmin"].includes(ctx.profile.role)||ctx.profile.must_change_password)return jsonError("권한이 없습니다.",403);
 const body=await request.json().catch(()=>null);if(!body)return jsonError("잘못된 요청",400);
 const username=String(body.username||"").trim().toLowerCase(),displayName=String(body.displayName||"").trim(),role=body.role as Role;
