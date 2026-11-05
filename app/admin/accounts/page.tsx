@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
-import {ArrowLeft,UserPlus,Shield,Users,KeyRound,UserX,UserCheck,History,RefreshCw} from "lucide-react";
+import {ArrowLeft,UserPlus,Shield,Users,KeyRound,UserX,UserCheck,History,RefreshCw,Search,FileUp} from "lucide-react";
 import {supabase,type Profile,type Role} from "@/lib/supabase";
 import {AdminShell} from "@/components/AdminShell";
 type Audit={id:number;actor_id:string;target_id:string;action:string;created_at:string};
@@ -9,14 +9,22 @@ export default function Admin(){
  const router=useRouter();
  const [me,setMe]=useState<Profile|null>(null),[users,setUsers]=useState<Profile[]>([]),[logs,setLogs]=useState<Audit[]>([]);
  const [status,setStatus]=useState(""),[busy,setBusy]=useState(false),[actionId,setActionId]=useState<string|null>(null);
+ const [searchQuery,setSearchQuery]=useState(""),[filterGrade,setFilterGrade]=useState(""),[filterClass,setFilterClass]=useState(""),[filterRole,setFilterRole]=useState(""),[total,setTotal]=useState(0),[limited,setLimited]=useState(false);
  const [username,setUsername]=useState(""),[displayName,setDisplayName]=useState(""),[role,setRole]=useState<Role>("student");
  const [grade,setGrade]=useState(""),[classNumber,setClassNumber]=useState(""),[studentNumber,setStudentNumber]=useState("");
  async function token(){return (await supabase.auth.getSession()).data.session?.access_token;}
- async function refresh(){
+ async function refresh(filters?:{q:string;grade:string;classNumber:string;role:string}){
   const t=await token();if(!t)return;
   const headers={Authorization:`Bearer ${t}`};
-  const [a,b]=await Promise.all([fetch("/api/admin/accounts",{headers,cache:"no-store"}),fetch("/api/admin/audit",{headers,cache:"no-store"})]);
-  if(a.ok)setUsers((await a.json()).accounts);
+  const f=filters||{q:searchQuery,grade:filterGrade,classNumber:filterClass,role:filterRole};
+  const params=new URLSearchParams();
+  if(f.q.trim())params.set("q",f.q.trim());
+  if(f.grade)params.set("grade",f.grade);
+  if(f.classNumber)params.set("classNumber",f.classNumber);
+  if(f.role)params.set("role",f.role);
+  const [a,b]=await Promise.all([fetch("/api/admin/accounts?"+params.toString(),{headers,cache:"no-store"}),fetch("/api/admin/audit",{headers,cache:"no-store"})]);
+  if(a.ok){const data=await a.json();setUsers(data.accounts||[]);setTotal(data.total??data.accounts.length);setLimited(Boolean(data.limited));}
+  else setStatus("계정 목록을 불러오지 못했습니다.");
   if(b.ok)setLogs((await b.json()).logs);
  }
  useEffect(()=>{(async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user){router.replace("/");return;}
@@ -51,6 +59,7 @@ export default function Admin(){
  return <AdminShell profile={me}><div className="admin-account-content">
   <a className="back" href="/admin"><ArrowLeft size={17}/> 관리자 홈</a>
   <header className="admin-header"><Shield size={29}/><div><h1>계정 관리</h1><p>계정 발급·상태 변경·비밀번호 초기화 내역을 기록합니다.</p></div></header>
+  <a className="bulk-action-banner" href="/admin/accounts/bulk"><FileUp size={23}/><span><strong>학생 일괄 등록</strong><small>CSV로 학생 명단을 한 번에 등록하고 임시 비밀번호를 내려받으세요.</small></span><span aria-hidden="true">→</span></a>
   <div className="admin-grid">
    <section className="widget">
     <div className="widget-title"><UserPlus size={21}/><h2>새 계정 발급</h2></div>
@@ -63,7 +72,18 @@ export default function Admin(){
     </form>
    </section>
    <section className="widget">
-    <div className="widget-title"><Users size={21}/><h2>발급된 계정 ({users.length})</h2><button className="text-btn" onClick={refresh} aria-label="새로고침"><RefreshCw size={17}/></button></div>
+    <div className="widget-title"><Users size={21}/><h2>계정 검색 ({total}명)</h2><button className="text-btn" onClick={()=>void refresh()} aria-label="새로고침"><RefreshCw size={17}/></button></div>
+    <form className="account-search-form" onSubmit={e=>{e.preventDefault();void refresh();}}>
+      <label className="account-search-label">이름 또는 ID 검색<input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="이름 또는 로그인 ID" /></label>
+      <div className="account-search-filters">
+        <select value={filterRole} onChange={e=>setFilterRole(e.target.value)} aria-label="계정 종류"><option value="">전체 계정</option><option value="student">학생</option><option value="teacher">교사</option><option value="admin">관리자</option><option value="superadmin">시스템 관리자</option></select>
+        <select value={filterGrade} onChange={e=>setFilterGrade(e.target.value)} aria-label="학년"><option value="">전체 학년</option>{[1,2,3,4,5,6].map(g=><option key={g} value={g}>{g}학년</option>)}</select>
+        <select value={filterClass} onChange={e=>setFilterClass(e.target.value)} aria-label="반"><option value="">전체 반</option>{Array.from({length:30},(_,i)=>i+1).map(n=><option key={n} value={n}>{n}반</option>)}</select>
+      </div>
+      <button type="submit" className="outline"><Search size={17}/> 검색</button>
+      <button type="button" className="text-btn" onClick={()=>{setSearchQuery("");setFilterRole("");setFilterGrade("");setFilterClass("");void refresh({q:"",grade:"",classNumber:"",role:""});}}>초기화</button>
+    </form>
+    {limited&&<p className="hint">검색 결과 중 최근 200명만 표시합니다. 더 좁은 조건으로 검색해 주세요.</p>}
     <div className="account-list">{users.map(p=><div className="account-item" key={p.id}>
      <div><b>{p.display_name}</b><small>@{p.username} · {p.role} · {p.disabled?"비활성":"활성"}</small></div>
      {canManage(p)&&<div style={{display:"flex",gap:6,flexWrap:"wrap"}}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, UserCheck, UserX, ScanLine, Megaphone, UserRound, BadgeCheck, ArrowUpRight, Activity } from "lucide-react";
+import { Users, UserCheck, UserX, ScanLine, FileUp, Megaphone, UserRound, BadgeCheck, ArrowUpRight, Activity } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
 import { AdminShell } from "@/components/AdminShell";
 
@@ -84,6 +84,7 @@ export default function AdminHome() {
       <h2>운영 바로가기</h2>
       <div className="admin-quick-grid">
         <a href="/admin/accounts" className="admin-quick-card"><Users size={25}/><strong>계정 관리</strong><span>학생·교사 계정 발급, 비활성화, 비밀번호 초기화</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
+        <a href="/admin/accounts/bulk" className="admin-quick-card"><FileUp size={25}/><strong>학생 일괄 등록</strong><span>CSV 명단으로 학생 계정 여러 개를 발급</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/admin/verify" className="admin-quick-card"><ScanLine size={25}/><strong>QR 신분 확인</strong><span>학생증 및 교직원증 일회용 QR 검증</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/announcements" className="admin-quick-card"><Megaphone size={25}/><strong>공지 관리</strong><span>학교 공지사항 작성·수정·게시</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/staff-id" className="admin-quick-card"><BadgeCheck size={25}/><strong>내 교직원증</strong><span>내 개발용 교직원증 확인 및 QR 발급</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
