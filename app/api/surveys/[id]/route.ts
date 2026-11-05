@@ -13,7 +13,7 @@ export async function POST(request:Request,{params}:Ctx){
   if(!Number.isInteger(answer)||answer<0||answer>5)return jsonError("선택지를 확인해 주세요.",400);
   const {data:survey,error}=await ctx.service.from("surveys").select("audience").eq("id",id).single();
   if(error||!survey)return jsonError("설문을 찾을 수 없습니다.",404);
-  if(!["admin","superadmin"].includes(ctx.profile.role)&&survey.audience!=="all"&&survey.audience!==ctx.profile.role)return jsonError("응답 대상이 아닙니다.",403);
+  if(survey.audience!=="all"&&survey.audience!==ctx.profile.role&&!(survey.audience==="teacher"&&["admin","superadmin"].includes(ctx.profile.role)))return jsonError("응답 대상이 아닙니다.",403);
   const {data:ok,error:voteError}=await ctx.service.rpc("cast_survey_vote",{p_survey:id,p_user:ctx.user.id,p_option:answer});
   if(voteError)return jsonError("응답 DB 설정을 확인해 주세요.",500);
   if(!ok)return jsonError("마감되었거나 이미 응답한 설문입니다.",409);

@@ -114,6 +114,11 @@ begin
    where id=item.user_id;
    restored:=restored+1;
  end loop;
+ if exists(
+   select 1 from public.profiles
+   where role='student' and not disabled and grade is not null and class_number is not null and student_number is not null
+   group by grade,class_number,student_number having count(*)>1
+ ) then raise exception 'Rollback would produce duplicate student slots'; end if;
  update public.student_lifecycle_batches set rolled_back_at=now(),rollback_actor_id=p_actor where id=p_batch;
  return restored;
 end;

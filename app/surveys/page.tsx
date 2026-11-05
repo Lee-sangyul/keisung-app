@@ -39,7 +39,7 @@ export default function SurveyCenter(){
    <div className="notice-meta"><span className="pill">{audienceName[s.audience]}</span><span className="pill">{finished?"마감":"진행 중"}</span><span>마감 {new Date(s.closes_at).toLocaleString("ko-KR")}</span></div>
    <h2>{s.title}</h2><p className="survey-question">{s.question}</p>
    {s.results?<><p className="muted"><BarChart3 size={16}/> 총 {total}명 응답 · 익명 결과</p>{s.options.map((o,i)=><div className="survey-result-row" key={i}><div><span>{o}</span><strong>{s.results?.[i]||0}표 ({total?Math.round((s.results?.[i]||0)/total*100):0}%)</strong></div><div className="survey-bar"><span style={{width:`${total?(s.results?.[i]||0)/total*100:0}%`}}/></div></div>)}</>:<div className="survey-options">{s.options.map((o,i)=><label key={i} className={answers[s.id]===i?"selected":""}><input type="radio" name={s.id} disabled={finished||s.participated||busy} checked={answers[s.id]===i} onChange={()=>setAnswers(p=>({...p,[s.id]:i}))}/>{o}</label>)}</div>}
-   {!finished&&!s.participated&&<button className="primary" disabled={busy||answers[s.id]===undefined} onClick={()=>vote(s.id)}>익명으로 응답하기</button>}
+   {!finished&&!s.participated&&(!manager||s.audience==="all"||s.audience==="teacher")&&<button className="primary" disabled={busy||answers[s.id]===undefined} onClick={()=>vote(s.id)}>익명으로 응답하기</button>}
    {s.participated&&<p className="survey-voted"><LockKeyhole size={16}/> 이미 응답한 설문입니다.</p>}
    {manager&&!finished&&<button className="outline" disabled={busy} onClick={()=>close(s.id)}>설문 마감</button>}
   </article>;})}

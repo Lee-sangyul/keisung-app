@@ -1,9 +1,10 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
-import {GraduationCap,ArrowLeft,ShieldAlert,RotateCcw,Users} from "lucide-react";
+import {GraduationCap,ArrowLeft,ShieldAlert,RotateCcw,Users,Download} from "lucide-react";
 import {supabase,type Profile} from "@/lib/supabase";
 import {AdminShell} from "@/components/AdminShell";
+import {csvCell} from "@/lib/bulk-students";
 type Student={id:string;username:string;display_name:string;grade:number|null;class_number:number|null;student_number:number|null};
 type Batch={id:string;target_year:number;created_at:string;rolled_back_at:string|null};
 type Preview={students:Student[];hash:string;total:number;promote:number;graduate:number;incomplete:number;batches:Batch[];hint:string};
@@ -14,6 +15,7 @@ export default function Lifecycle(){
  async function token(){return (await supabase.auth.getSession()).data.session?.access_token||"";}
  async function reload(){const t=await token();const r=await fetch("/api/admin/lifecycle",{headers:{Authorization:`Bearer ${t}`},cache:"no-store"});const d=await r.json();if(!r.ok)throw Error(d.error||"명단 로딩 실패");setData(d);}
  useEffect(()=>{let live=true;(async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user){router.replace("/");return;}const {data:p}=await supabase.from("profiles").select("*").eq("id",user.id).single();if(!live)return;if(!p||p.disabled||p.must_change_password||!["admin","superadmin"].includes(p.role)){router.replace("/dashboard");return;}setMe(p as Profile);try{await reload();}catch(e){if(live)setMessage(e instanceof Error?e.message:"조회 실패");}})();return()=>{live=false;};},[router]);
+ function downloadRoster(){if(!data)return;const rows=[["ID","이름","현재 학년","현재 반","현재 번호","예정 처리"],...data.students.map(s=>[s.username,s.display_name,String(s.grade??""),String(s.class_number??""),String(s.student_number??""),s.grade===6?"졸업":"진급"] as string[])];const content="\uFEFF"+rows.map(row=>row.map(csvCell).join(",")).join("\r\n");const url=URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="keisung-year-transition-preview.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);}
  async function apply(){if(!data||busy||!agree||phrase!==`진급 ${year}`)return;if(!confirm(`학생 ${data.total}명에 대한 ${year}학년도 진급·졸업 처리를 실행할까요? 반·번호는 유지됩니다.`))return;setBusy(true);setMessage("");try{
  const r=await fetch("/api/admin/lifecycle",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${await token()}`},body:JSON.stringify({year,hash:data.hash,confirmation:phrase,keepClassAndNumber:agree})});
  const d=await r.json();if(!r.ok)throw Error(d.error||"실패");
@@ -44,7 +46,7 @@ export default function Lifecycle(){
   <label>확인 문구: <strong>진급 {year}</strong><input value={phrase} placeholder={`진급 ${year}`} onChange={e=>setPhrase(e.target.value)}/></label>
   <button className="primary" disabled={busy||!data||!data.total||data.incomplete>0||!agree||phrase!==`진급 ${year}`} onClick={apply}>{busy?"처리 중...":"진급·졸업 처리 실행"}</button>
  </section>
- <section className="widget lifecycle-roster"><h2>대상자 미리보기 (최대 30명 표시)</h2>
+ <section className="widget lifecycle-roster"><h2>대상자 미리보기 (화면에 30명 표시)</h2><button type="button" className="outline" onClick={downloadRoster} disabled={!data?.total}><Download size={16}/> 전체 명단 CSV 다운로드</button><p className="muted">내려받은 명단에는 학생 개인정보가 포함됩니다. 승인받은 테스트 환경에서만 확인하고 안전하게 삭제하세요.</p>
   <div className="bulk-table-wrap"><table className="bulk-table"><thead><tr><th>ID</th><th>이름</th><th>현재 학적</th><th>예상 변경</th></tr></thead><tbody>{data?.students.slice(0,30).map(s=><tr key={s.id}><td>{s.username}</td><td>{s.display_name}</td><td>{s.grade}학년 {s.class_number}반 {s.student_number}번</td><td>{s.grade===6?"졸업 · 비활성화":s.grade?`${s.grade+1}학년 (반/번호 유지)`:"정보 없음"}</td></tr>)}</tbody></table></div>
  </section>
  <section className="widget lifecycle-history"><h2>최근 학년도 전환 이력</h2>{data?.batches.length?data.batches.map(b=><div className="account-item" key={b.id}><div><strong>{b.target_year}학년도</strong><small>{new Date(b.created_at).toLocaleString("ko-KR")} · {b.rolled_back_at?"복원 완료":"적용됨"}</small></div>{!b.rolled_back_at&&<button className="outline" disabled={busy} onClick={()=>rollback(b.id)}><RotateCcw size={16}/> 이전 상태로 복원</button>}</div>):<p className="muted">전환 기록이 없어요.</p>}</section>
