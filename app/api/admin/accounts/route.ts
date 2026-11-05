@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { authenticate, jsonError } from "@/lib/server-auth";
 import {accountEmail,type Role} from "@/lib/supabase";
+import {audit} from "@/lib/admin";
 export const runtime="nodejs";
 function allowed(role:string,requested:Role){return role==="superadmin"?["student","teacher","admin"].includes(requested):["student","teacher"].includes(requested);}
 export async function GET(request:Request){try{const ctx=await authenticate(request);if(!ctx)return jsonError("인증이 필요합니다.",401);if(!["admin","superadmin"].includes(ctx.profile.role)||ctx.profile.must_change_password)return jsonError("권한이 없습니다.",403);
@@ -17,4 +18,5 @@ const {data,error}=await ctx.service.auth.admin.createUser({email:accountEmail(u
 if(error||!data.user)return jsonError(error?.message||"계정 생성 실패",409);
 const {error:profileError}=await ctx.service.from("profiles").insert({id:data.user.id,username,display_name:displayName,role,grade:role==="student"?(body.grade??null):null,class_number:role==="student"?(body.classNumber??null):null,student_number:role==="student"?(body.studentNumber??null):null,must_change_password:true,disabled:false});
 if(profileError){await ctx.service.auth.admin.deleteUser(data.user.id);return jsonError("계정 정보 저장 실패",500);}
+if(!await audit(ctx.service,ctx.user.id,data.user.id,"create_account"))return jsonError("계정은 생성됐지만 감사 기록에 실패했습니다. 관리자에게 확인해 주세요.",500);
 return Response.json({username,temporaryPassword},{status:201,headers:{"Cache-Control":"no-store"}});}catch{return jsonError("서버 오류",500);}}
