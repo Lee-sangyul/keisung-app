@@ -17,6 +17,7 @@ export default function Dashboard(){
    const {data,error}=await supabase.from("profiles").select("*").eq("id",user.id).single();
    if(!active)return;
    if(error||!data||data.disabled){await supabase.auth.signOut();router.replace("/");return;}
+   if(["admin","superadmin"].includes(data.role)&&!data.must_change_password){router.replace("/admin");return;}
    setProfile(data as Profile);setLoading(false);
    fetch("/api/school").then(r=>r.json()).then(d=>{if(!active)return;setMeals(d.meals||[]);setEvents(d.events||[]);setDataStatus(d.message||"");}).catch(()=>{if(active)setDataStatus("학교 데이터를 불러오지 못했어요.");});
  })();return()=>{active=false;};},[router]);
@@ -25,7 +26,7 @@ export default function Dashboard(){
   if(newPw.length<12){setPwError("비밀번호는 12자 이상으로 설정해 주세요.");setPwBusy(false);return;}
   const {data:{session}}=await supabase.auth.getSession();
   const response=await fetch("/api/account/password-changed",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${session?.access_token||""}`},body:JSON.stringify({password:newPw})});
-  if(!response.ok){setPwError("비밀번호는 변경되었지만 확인 처리에 실패했어요. 관리자에게 문의해 주세요.");}else {setProfile(p=>p?{...p,must_change_password:false}:p);setNewPw("");}
+  if(!response.ok){setPwError("비밀번호는 변경되었지만 확인 처리에 실패했어요. 관리자에게 문의해 주세요.");}else {setProfile(p=>p?{...p,must_change_password:false}:p);setNewPw("");if(profile&&["admin","superadmin"].includes(profile.role))router.replace("/admin");}
   setPwBusy(false);
  }
  if(loading)return <main className="center"><Loader2 className="spin"/> 계정 확인 중...</main>;

@@ -78,7 +78,7 @@ export default function StaffIdPage() {
   if (!allowed) return <main className="staff-id-page">
     <MobileNav role={profile.role} />
     <div className="staff-id-wrap">
-      <a href="/dashboard" className="back"><ArrowLeft size={18}/> 홈으로</a>
+      <a href={["admin","superadmin"].includes(profile.role)?"/admin":"/dashboard"} className="back"><ArrowLeft size={18}/> 홈으로</a>
       <h1>교직원증</h1>
       <p className="muted">교직원 계정 전용 기능입니다. 학생은 학생증 탭을 이용해 주세요.</p>
     </div>

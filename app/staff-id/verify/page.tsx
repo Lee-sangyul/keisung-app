@@ -112,7 +112,7 @@ export default function StaffVerifyPage() {
   if (!profile) return <main className="center">관리자 권한 확인 중...</main>;
   return <main className="admin-page staff-verify-page">
     <MobileNav role={profile.role}/>
-    <a className="back" href="/staff-id"><ArrowLeft size={17}/> 교직원증</a>
+    <a className="back" href="/admin/verify"><ArrowLeft size={17}/> QR 검증 센터</a>
     <header className="staff-id-heading">
       <span className="eyebrow">STAFF VALIDATION</span>
       <h1>교직원증 검증</h1>

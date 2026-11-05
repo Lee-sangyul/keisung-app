@@ -6,14 +6,23 @@ import { supabase, accountEmail } from "@/lib/supabase";
 export default function Home() {
   const router = useRouter();
   const [id, setId] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
-  useEffect(() => { supabase.auth.getSession().then(({data}) => { if(data.session) router.replace("/dashboard"); }); }, [router]);
+  useEffect(() => { let active=true; (async()=> {
+    const {data:{user}}=await supabase.auth.getUser();
+    if(!user||!active)return;
+    const {data:p}=await supabase.from("profiles").select("role,must_change_password,disabled").eq("id",user.id).single();
+    if(!active)return;
+    if(p?.disabled){await supabase.auth.signOut();return;}
+    router.replace(p&&!p.must_change_password&&["admin","superadmin"].includes(p.role)?"/admin":"/dashboard");
+  })();return()=>{active=false;}; }, [router]);
   async function login(e: React.FormEvent) {
     e.preventDefault(); setError(""); setLoading(true);
     try {
       if (!/^[a-z0-9._-]{3,32}$/.test(id.trim().toLowerCase())) throw new Error("ID는 영문 소문자·숫자·._-로 3~32자여야 해요.");
-      const { error } = await supabase.auth.signInWithPassword({email: accountEmail(id), password});
+      const { data: loginData, error } = await supabase.auth.signInWithPassword({email: accountEmail(id), password});
       if (error) throw new Error("아이디 또는 비밀번호를 확인해 주세요.");
-      router.replace("/dashboard");
+      const {data:p}=await supabase.from("profiles").select("role,must_change_password,disabled").eq("id",loginData.user.id).single();
+      if(p?.disabled){await supabase.auth.signOut();throw Error("비활성화된 계정입니다. 관리자에게 문의해 주세요.");}
+      router.replace(p&&!p.must_change_password&&["admin","superadmin"].includes(p.role)?"/admin":"/dashboard");
     } catch (err) { setError(err instanceof Error ? err.message : "로그인에 실패했어요."); }
     finally { setLoading(false); }
   }
