@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, UserCheck, UserX, ScanLine, FileUp, Megaphone, UserRound, BadgeCheck, ArrowUpRight, Activity } from "lucide-react";
+import { Users, UserCheck, UserX, ScanLine, FileUp, GraduationCap, BellRing, ClipboardList, Megaphone, UserRound, BadgeCheck, ArrowUpRight, Activity } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
 import { AdminShell } from "@/components/AdminShell";
 
@@ -85,6 +85,9 @@ export default function AdminHome() {
       <div className="admin-quick-grid">
         <a href="/admin/accounts" className="admin-quick-card"><Users size={25}/><strong>계정 관리</strong><span>학생·교사 계정 발급, 비활성화, 비밀번호 초기화</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/admin/accounts/bulk" className="admin-quick-card"><FileUp size={25}/><strong>학생 일괄 등록</strong><span>CSV 명단으로 학생 계정 여러 개를 발급</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
+        <a href="/admin/lifecycle" className="admin-quick-card"><GraduationCap size={25}/><strong>진급·졸업 관리</strong><span>학년도 전환, 미리보기와 변경 이력 복원</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
+        <a href="/notifications" className="admin-quick-card"><BellRing size={25}/><strong>푸시 알림</strong><span>구독한 학생·교직원에게 맞춤 알림 발송</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
+        <a href="/surveys" className="admin-quick-card"><ClipboardList size={25}/><strong>설문 센터</strong><span>학생 설문 작성, 마감 및 익명 결과 조회</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/admin/verify" className="admin-quick-card"><ScanLine size={25}/><strong>QR 신분 확인</strong><span>학생증 및 교직원증 일회용 QR 검증</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/announcements" className="admin-quick-card"><Megaphone size={25}/><strong>공지 관리</strong><span>학교 공지사항 작성·수정·게시</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/staff-id" className="admin-quick-card"><BadgeCheck size={25}/><strong>내 교직원증</strong><span>내 개발용 교직원증 확인 및 QR 발급</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>

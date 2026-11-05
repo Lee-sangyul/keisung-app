@@ -72,3 +72,10 @@ Supabase SQL Editor에서 `supabase/mvp.sql` 실행 후 `npm run dev`로 재시�
 - 추가 기능: `/admin/accounts`에서 이름·ID 및 역할/학년/반 조건으로 **서버 검색**할 수 있습니다. 화면에는 최대 200개 결과가 표시됩니다.
 - 개발용 기능이므로 승인받지 않은 실제 학생 정보를 입력하지 마세요. 비밀번호 CSV는 안전한 경로로 개별 전달한 뒤 삭제해야 합니다.
 
+
+## v0.7 세 가지 추가 기능
+- 학년도 진급·졸업 및 복원: `/admin/lifecycle`
+- PWA 알림 신청·관리자 수동 발송: `/notifications`
+- 관리자 설문 생성 및 학생 익명 응답: `/surveys`
+
+**설치/보안 안내**: [docs/NEXT-FEATURES.md](docs/NEXT-FEATURES.md). 기능별 새 SQL과 푸시 VAPID 설정이 필요합니다. **기존 학생 명부나 실계정 DB는 자동 변경되지 않습니다.**
