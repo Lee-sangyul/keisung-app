@@ -13,7 +13,7 @@ async function student(request:Request){
 
 export async function GET(request:Request){
  try{
- const {ctx,error}=await student(request);if(error||!ctx)return error;
+ const {ctx,error}=await student(request);if(error||!ctx)return error||jsonError("접근 권한이 없습니다.",403);
  const {data,error:dbError}=await ctx.service.from("personal_timetable")
   .select("id,weekday,start_period,end_period,subject,room,teacher,color")
   .eq("user_id",ctx.user.id).order("weekday").order("start_period").limit(60);
@@ -24,7 +24,7 @@ export async function GET(request:Request){
 
 export async function PUT(request:Request){
  try{
- const {ctx,error}=await student(request);if(error||!ctx)return error;
+ const {ctx,error}=await student(request);if(error||!ctx)return error||jsonError("접근 권한이 없습니다.",403);
  const body=await request.json().catch(()=>null);
  const id=body?.id??null;
  const subject=typeof body?.subject==="string"?body.subject.trim():"";
@@ -49,7 +49,7 @@ export async function PUT(request:Request){
 
 export async function DELETE(request:Request){
  try{
- const {ctx,error}=await student(request);if(error||!ctx)return error;
+ const {ctx,error}=await student(request);if(error||!ctx)return error||jsonError("접근 권한이 없습니다.",403);
  const body=await request.json().catch(()=>null);
  const id=body?.id;
  if(typeof id!=="string"||!/^[a-f\d-]{36}$/i.test(id))return jsonError("수업 ID를 확인해 주세요.",400);
