@@ -79,3 +79,10 @@ Supabase SQL Editor에서 `supabase/mvp.sql` 실행 후 `npm run dev`로 재시�
 - 관리자 설문 생성 및 학생 익명 응답: `/surveys`
 
 **설치/보안 안내**: [docs/NEXT-FEATURES.md](docs/NEXT-FEATURES.md). 기능별 새 SQL과 푸시 VAPID 설정이 필요합니다. **기존 학생 명부나 실계정 DB는 자동 변경되지 않습니다.**
+
+## v0.8 학교생활 기능
+- **분실물 센터** `/lost-found`: 관리자 등록·수령처리, 학생/교직원 조회 전용
+- **나만의 시간표** `/timetable`: 학생이 직접 만드는 주간 시간표, 교시 중복 방지, 개인별 데이터 분리
+- 설치 SQL: `supabase/school-life.sql` (비공개 사진 버킷 포함)
+- 자세한 안내: [docs/SCHOOL-LIFE-v0.8.md](docs/SCHOOL-LIFE-v0.8.md)
+- 기자재 관리 기능은 이번 버전에 추가하지 않았습니다.

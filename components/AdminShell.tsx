@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Users, ScanLine, Megaphone, UserRound, LogOut, Shield, GraduationCap, ClipboardList, Bell } from "lucide-react";
+import { LayoutDashboard, Users, ScanLine, Megaphone, UserRound, LogOut, Shield, GraduationCap, ClipboardList, Bell, PackageSearch } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
 import { MobileNav } from "@/components/MobileNav";
 
@@ -11,6 +11,7 @@ const pages = [
   { href: "/admin", label: "관리자 홈", Icon: LayoutDashboard },
   { href: "/admin/accounts", label: "계정 관리", Icon: Users },
   { href: "/admin/verify", label: "QR 검증", Icon: ScanLine },
+  { href: "/lost-found", label: "분실물 관리", Icon: PackageSearch },
   { href: "/admin/lifecycle", label: "진급·졸업 관리", Icon: GraduationCap },
   { href: "/surveys", label: "설문 센터", Icon: ClipboardList },
   { href: "/notifications", label: "푸시 알림 센터", Icon: Bell },
