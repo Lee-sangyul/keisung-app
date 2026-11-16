@@ -14,6 +14,33 @@ create index if not exists student_id_challenges_expiry_idx
  on public.student_id_challenges(expires_at);
 alter table public.student_id_challenges enable row level security;
 revoke all on public.student_id_challenges from anon,authenticated;
+grant select, insert, update on public.student_id_challenges to service_role;
+
+-- Serialize issuance per student. If the insert fails, PostgreSQL rolls back the revocation.
+create or replace function public.issue_student_id_challenge(p_user_id uuid, p_hash text)
+returns timestamptz
+language plpgsql security invoker
+set search_path = ''
+as $
+declare
+ challenge_time timestamptz;
+ expiry timestamptz;
+begin
+ perform pg_advisory_xact_lock(hashtextextended('student-id:' || p_user_id::text, 0));
+
+ challenge_time := clock_timestamp();
+ expiry := challenge_time + interval '45 seconds';
+ update public.student_id_challenges
+ set consumed_at = challenge_time
+ where user_id = p_user_id and consumed_at is null;
+
+ insert into public.student_id_challenges(user_id, token_hash, expires_at, created_at)
+ values (p_user_id, p_hash, expiry, challenge_time);
+ return expiry;
+end;
+$;
+revoke all on function public.issue_student_id_challenge(uuid,text) from public,anon,authenticated;
+grant execute on function public.issue_student_id_challenge(uuid,text) to service_role;
 -- Must be atomic: first valid scan wins, all later scans are rejected.
 -- Locking in UPDATE ensures two concurrent verifiers cannot both succeed.
 create or replace function public.consume_student_id_challenge(p_hash text)

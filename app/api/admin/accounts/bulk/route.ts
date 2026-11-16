@@ -59,11 +59,11 @@ export async function POST(request: Request) {
         failed.push({ index, username: row.username, error: "인증 계정 생성 실패(중복 또는 설정 확인)" });
         continue;
       }
-      const { error: profileError } = await ctx.service.from("profiles").insert({
+      const { error: profileError } = await ctx.service.from("profiles").upsert({
         id: data.user.id, username: row.username, display_name: row.displayName,
         grade: row.grade, class_number: row.classNumber, student_number: row.studentNumber,
         role: "student", disabled: false, must_change_password: true,
-      });
+      }, { onConflict: "id" });
       if (profileError) {
         const { error: rollbackError } = await ctx.service.auth.admin.deleteUser(data.user.id);
         failed.push({ index, username: row.username, error: rollbackError ? "프로필 저장 실패 · 관리자 확인 필요" : "프로필 저장 실패(생성 취소됨)" });
