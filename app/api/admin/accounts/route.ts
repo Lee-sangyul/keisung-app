@@ -25,7 +25,13 @@ if(role==="student"&&((body.grade!=null&&body.grade>6)||(body.classNumber!=null&
 const temporaryPassword=randomBytes(24).toString("base64url");
 const {data,error}=await ctx.service.auth.admin.createUser({email:accountEmail(username),password:temporaryPassword,email_confirm:true,user_metadata:{username,display_name:displayName}});
 if(error||!data.user)return jsonError(error?.message||"계정 생성 실패",409);
-const {error:profileError}=await ctx.service.from("profiles").insert({id:data.user.id,username,display_name:displayName,role,grade:role==="student"?(body.grade??null):null,class_number:role==="student"?(body.classNumber??null):null,student_number:role==="student"?(body.studentNumber??null):null,must_change_password:true,disabled:false});
-if(profileError){await ctx.service.auth.admin.deleteUser(data.user.id);return jsonError("계정 정보 저장 실패",500);}
-if(!await audit(ctx.service,ctx.user.id,data.user.id,"create_account"))return jsonError("계정은 생성됐지만 감사 기록에 실패했습니다. 관리자에게 확인해 주세요.",500);
+const {error:profileError}=await ctx.service.from("profiles").upsert({id:data.user.id,username,display_name:displayName,role,grade:role==="student"?(body.grade??null):null,class_number:role==="student"?(body.classNumber??null):null,student_number:role==="student"?(body.studentNumber??null):null,must_change_password:true,disabled:false},{onConflict:"id"});
+if (profileError) {
+  const { error: rollbackError } = await ctx.service.auth.admin.deleteUser(data.user.id);
+  return jsonError(rollbackError ? "프로필 저장 실패 · 관리자 확인 필요" : "프로필 저장 실패(생성 취소됨)", 500);
+}
+if (!(await audit(ctx.service, ctx.user.id, data.user.id, "create_account"))) {
+  const { error: rollbackError } = await ctx.service.auth.admin.deleteUser(data.user.id);
+  return jsonError(rollbackError ? "감사 기록 실패 · 관리자 확인 필요" : "감사 기록 실패(생성 취소됨)", 500);
+}
 return Response.json({username,temporaryPassword},{status:201,headers:{"Cache-Control":"no-store"}});}catch{return jsonError("서버 오류",500);}}
