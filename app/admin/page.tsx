@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Users, UserCheck, UserX, ScanLine, FileUp, GraduationCap, BellRing, ClipboardList, Megaphone, UserRound, BadgeCheck, PackageSearch, ArrowUpRight, Activity } from "lucide-react";
 import { supabase, type Profile } from "@/lib/supabase";
+import { Wrench } from "lucide-react";
 import { AdminShell } from "@/components/AdminShell";
 
 type AccountSummary = { role: string; disabled: boolean };
@@ -88,6 +89,7 @@ export default function AdminHome() {
         <a href="/admin/lifecycle" className="admin-quick-card"><GraduationCap size={25}/><strong>진급·졸업 관리</strong><span>학년도 전환, 미리보기와 변경 이력 복원</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/notifications" className="admin-quick-card"><BellRing size={25}/><strong>푸시 알림</strong><span>구독한 학생·교직원에게 맞춤 알림 발송</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/surveys" className="admin-quick-card"><ClipboardList size={25}/><strong>설문 센터</strong><span>학생 설문 작성, 마감 및 익명 결과 조회</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
+        <a href="/equipment" className="admin-quick-card"><Wrench size={25}/><strong>기자재 고장 신고</strong><span>신고 처리·기자재 QR 관리</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/lost-found" className="admin-quick-card"><PackageSearch size={25}/><strong>분실물 관리</strong><span>습득물 사진 등록·수령 완료 처리</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/admin/verify" className="admin-quick-card"><ScanLine size={25}/><strong>QR 신분 확인</strong><span>학생증 및 교직원증 일회용 QR 검증</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>
         <a href="/announcements" className="admin-quick-card"><Megaphone size={25}/><strong>공지 관리</strong><span>학교 공지사항 작성·수정·게시</span><ArrowUpRight className="admin-quick-arrow" size={20}/></a>

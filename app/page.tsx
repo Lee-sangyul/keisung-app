@@ -3,6 +3,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CalendarDays, ChevronRight, CloudSun, LockKeyhole, ShieldCheck, Umbrella } from "lucide-react";
 import { supabase, accountEmail } from "@/lib/supabase";
+import { EQUIPMENT_CODE, equipmentReturnPath } from "@/lib/equipment";
+import type { Profile } from "@/lib/supabase";
+
+function destination(profile: Pick<Profile, "role" | "must_change_password"> | null) {
+  const search = window.location.search;
+  const equipmentPath = equipmentReturnPath(search);
+  if (equipmentPath && profile && !profile.must_change_password) return equipmentPath;
+  if (equipmentPath && profile?.must_change_password) {
+    const code = new URLSearchParams(search).get("equipment");
+    if (code && EQUIPMENT_CODE.test(code)) return "/dashboard?equipment=" + code;
+  }
+  return profile && !profile.must_change_password && ["admin", "superadmin"].includes(profile.role) ? "/admin" : "/dashboard";
+}
+
 export default function Home() {
   const router = useRouter();
   const [id, setId] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
@@ -12,7 +26,7 @@ export default function Home() {
     const {data:p}=await supabase.from("profiles").select("role,must_change_password,disabled").eq("id",user.id).single();
     if(!active)return;
     if(p?.disabled){await supabase.auth.signOut();return;}
-    router.replace(p&&!p.must_change_password&&["admin","superadmin"].includes(p.role)?"/admin":"/dashboard");
+    router.replace(destination(p));
   })();return()=>{active=false;}; }, [router]);
   async function login(e: React.FormEvent) {
     e.preventDefault(); setError(""); setLoading(true);
@@ -22,7 +36,7 @@ export default function Home() {
       if (error) throw new Error("아이디 또는 비밀번호를 확인해 주세요.");
       const {data:p}=await supabase.from("profiles").select("role,must_change_password,disabled").eq("id",loginData.user.id).single();
       if(p?.disabled){await supabase.auth.signOut();throw Error("비활성화된 계정입니다. 관리자에게 문의해 주세요.");}
-      router.replace(p&&!p.must_change_password&&["admin","superadmin"].includes(p.role)?"/admin":"/dashboard");
+      router.replace(destination(p));
     } catch (err) { setError(err instanceof Error ? err.message : "로그인에 실패했어요."); }
     finally { setLoading(false); }
   }
