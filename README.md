@@ -86,3 +86,18 @@ Supabase SQL Editor에서 `supabase/mvp.sql` 실행 후 `npm run dev`로 재시�
 - 설치 SQL: `supabase/school-life.sql` (비공개 사진 버킷 포함)
 - 자세한 안내: [docs/SCHOOL-LIFE-v0.8.md](docs/SCHOOL-LIFE-v0.8.md)
 - 기자재 관리 기능은 이번 버전에 추가하지 않았습니다.
+
+## 기자재 고장 신고
+
+- Supabase에서 `supabase/schema.sql` 적용 후 `supabase/equipment.sql`을 실행합니다.
+- 학생·교직원은 대시보드의 **기자재 고장 신고**에서 직접 신고하고 자신의 처리 상태를 확인할 수 있습니다.
+- 관리자는 **기자재 등록 및 QR**에서 기기 코드·종류·위치를 등록하고 PNG QR을 다운로드합니다. QR에는 기자재 코드가 포함된 신고 URL이 들어갑니다. 기기 라벨은 실제 사용할 배포 주소에서 생성하세요.
+- 관리자와 지정된 담당자는 신고를 **접수 → 처리 중 → 해결** 순서로 변경합니다. 처리 담당자 지정은 Supabase SQL Editor에서 아래처럼 계정 ID로 합니다.
+
+```sql
+insert into public.equipment_report_handlers (user_id)
+select id from public.profiles where username = 'replace-with-handler-id'
+on conflict do nothing;
+```
+
+담당을 해제할 때는 `delete from public.equipment_report_handlers where user_id = (select id from public.profiles where username = 'replace-with-handler-id');`를 실행합니다.
